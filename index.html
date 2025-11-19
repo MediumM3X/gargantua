@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interstellar Experience | Kozmos</title>
+    
+    <!-- Fontlar -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;500;700&display=swap" rel="stylesheet">
+    <!-- İkonlar (FontAwesome) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --accent-color: #ffb86c;
+            --glass-bg: rgba(20, 20, 20, 0.6);
+            --glass-border: rgba(255, 184, 108, 0.2);
+        }
+
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto !important; }
+        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+        .lenis.lenis-stopped { overflow: hidden; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Exo 2', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* --- Video Background --- */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            object-fit: cover;
+            z-index: -2;
+        }
+
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5); /* %50 Karartma */
+            z-index: -1;
+        }
+
+        /* --- SES BUTONU (ÖNEMLİ) --- */
+        #sound-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        #sound-toggle:hover {
+            background: var(--accent-color);
+            color: #000;
+            box-shadow: 0 0 15px rgba(255, 184, 108, 0.6);
+        }
+
+        /* --- Navigasyon --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            box-sizing: border-box;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            color: var(--accent-color);
+            text-shadow: 0 0 10px rgba(255, 184, 108, 0.5);
+        }
+
+        .menu-links {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .menu-links a {
+            color: #ddd;
+            text-decoration: none;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .menu-links a:hover {
+            color: var(--accent-color);
+        }
+
+        .menu-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        .menu-links a:hover::after {
+            width: 100%;
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 0 10%;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+            line-height: 1;
+            margin: 0;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(0,0,0,0.8);
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .hero span {
+            color: var(--accent-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 500px;
+            margin-top: 2rem;
+            color: #ccc;
+            text-shadow: 0 0 10px #000;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        /* --- Content Sections --- */
+        section {
+            padding: 120px 10%;
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .content-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 3rem;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            opacity: 0;
+            transform: translateY(100px);
+        }
+
+        .section-number {
+            font-size: 6rem;
+            position: absolute;
+            top: -40px;
+            right: 20px;
+            color: rgba(255, 184, 108, 0.1);
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+            margin-top: 0;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #ddd;
+        }
+
+        section:nth-child(odd) { justify-content: flex-start; }
+        section:nth-child(even) { justify-content: flex-end; }
+
+        footer {
+            padding: 50px;
+            text-align: center;
+            color: #666;
+            font-size: 0.8rem;
+            background: #000;
+            border-top: 1px solid #222;
+            position: relative;
+            z-index: 10;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            .content-card { padding: 1.5rem; }
+            section { padding: 80px 5%; }
+            #sound-toggle { bottom: 20px; right: 20px; padding: 10px 15px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 
+        NOT: 'autoplay' çalışması için 'muted' şarttır. 
+        Sesi aşağıda JavaScript ile butona basınca açıyoruz.
+    -->
+    <video id="bg-video" class="video-background" autoplay muted loop playsinline>
+        <source src="arkaplan.mp4" type="video/mp4">
+        Tarayıcınız video etiketini desteklemiyor.
+    </video>
+    
+    <div class="video-overlay"></div>
+
+    <!-- SES AÇMA BUTONU -->
+    <button id="sound-toggle">
+        <i class="fa-solid fa-volume-xmark"></i>
+        <span>SESİ AÇ</span>
+    </button>
+
+    <!-- Menü -->
+    <nav>
+        <div class="logo">GARGANTUA</div>
+        <div class="menu-links">
+            <a href="#yildizlar">Yıldızlar</a>
+            <a href="#gezegenler">Gezegenler</a>
+            <a href="#galaksiler">Galaksiler</a>
+            <a href="#nebulalar">Nebulalar</a>
+            <a href="#karadelikler">Karadelikler</a>
+            <a href="#evren">Evren ve Fazlası</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <div class="hero">
+        <h1>OLAY UFKUNUN<br><span>ÖTESİNE GEÇ</span></h1>
+        <p>Zamanın büküldüğü, ışığın hapsolduğu yerde bilimin sınırlarını keşfedin. Interstellar deneyimi şimdi eksiksiz.</p>
+    </div>
+
+    <!-- İçerik -->
+    <section id="yildizlar">
+        <div class="content-card">
+            <span class="section-number">01</span>
+            <h2>Yıldızlar</h2>
+            <p>
+                Yıldızlar, evrenin temel yapı taşlarıdır. Devasa hidrojen bulutlarının kütleçekimi altında çökmesiyle oluşurlar. Çekirdeklerindeki nükleer reaksiyonlar, demire kadar olan elementleri üretir. Bizim Güneşimiz, Samanyolu Galaksisi'ndeki 200 milyar yıldızdan sadece biridir.
+            </p>
+        </div>
+    </section>
+
+    <section id="gezegenler">
+        <div class="content-card">
+            <span class="section-number">02</span>
+            <h2>Gezegenler</h2>
+            <p>
+                Yıldız oluşumundan arta kalan toz ve gaz disklerinden (öngezegen diski) meydana gelirler. Kendi ışıklarını üretmezler. Evrende "Gezegenimsi" (Rogue Planets) adı verilen, herhangi bir yıldıza bağlı olmadan uzayda sürüklenen yetim gezegenler de bulunur.
+            </p>
+        </div>
+    </section>
+
+    <section id="galaksiler">
+        <div class="content-card">
+            <span class="section-number">03</span>
+            <h2>Galaksiler</h2>
+            <p>
+                Galaksiler; milyarlarca yıldız, gaz, kozmik toz ve karanlık maddenin kütleçekimi ile bir arada tutulduğu devasa sistemlerdir. 
+                Sarmal, Eliptik ve Düzensiz olarak sınıflandırılırlar. Merkezlerinde genellikle süper kütleli karadelikler bulunur.
+            </p>
+        </div>
+    </section>
+
+    <section id="nebulalar">
+        <div class="content-card">
+            <span class="section-number">04</span>
+            <h2>Nebulalar</h2>
+            <p>
+                Latince "Bulut" anlamına gelir. Yıldızların doğduğu (Orion Bulutsusu) veya öldüğü (Yüzük Bulutsusu) yerlerdir. Renkleri, içerdikleri gazların iyonize olmasıyla ortaya çıkar. Teleskoplarla görülen o muhteşem renk cümbüşlerinin kaynağıdırlar.
+            </p>
+        </div>
+    </section>
+
+    <section id="karadelikler">
+        <div class="content-card">
+            <span class="section-number">05</span>
+            <h2>Karadelikler</h2>
+            <p>
+                Kütleçekim o kadar güçlüdür ki, ışık bile kaçamaz. Olay ufku, evrenin bilinen fizik kurallarının sona erdiği sınırdır. Interstellar filmindeki Gargantua, bir karadeliğin bilimsel olarak en doğru tasvirlerinden biri olarak kabul edilir.
+            </p>
+        </div>
+    </section>
+
+    <section id="evren">
+        <div class="content-card">
+            <span class="section-number">06</span>
+            <h2>Evren ve Daha Fazlası</h2>
+            <p>
+                <strong>Büyük Patlama:</strong> Evrenimiz 13.8 milyar yıl önce sıcak ve yoğun bir noktadan genişleyerek oluştu.
+                <br><br>
+                <strong>Karanlık Taraf:</strong> Şaşırtıcı bir şekilde evrenin %68'i "Karanlık Enerji", %27'si "Karanlık Madde"den oluşur. Gördüğümüz yıldızlar, gezegenler ve biz; evrenin sadece %5'lik kısmıyız. Bilinmezlik, keşfedilmeyi bekliyor.
+            </p>
+        </div>
+    </section>
+
+    <footer>
+        Developed for Space Enthusiasts | Video Background & Smooth Scroll
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        // --- 1. SES BUTONU FONKSİYONU ---
+        const video = document.getElementById('bg-video');
+        const soundBtn = document.getElementById('sound-toggle');
+        const btnIcon = soundBtn.querySelector('i');
+        const btnText = soundBtn.querySelector('span');
+
+        // Site ilk yüklendiğinde video sessiz başlar.
+        // Butona basınca sesi açarız.
+        soundBtn.addEventListener('click', () => {
+            if (video.muted) {
+                // Sesi aç
+                video.muted = false;
+                video.volume = 0.5; // Ses seviyesini %50 yap (İsteğe göre 1.0 yapabilirsin)
+                
+                // Buton görünümünü değiştir
+                btnIcon.classList.remove('fa-volume-xmark');
+                btnIcon.classList.add('fa-volume-high');
+                btnText.textContent = "SESİ KAPAT";
+                
+                // Sesi açınca renk efekti
+                soundBtn.style.backgroundColor = "var(--accent-color)";
+                soundBtn.style.color = "#000";
+            } else {
+                // Sesi kapat
+                video.muted = true;
+                
+                // Buton görünümünü eski haline getir
+                btnIcon.classList.remove('fa-volume-high');
+                btnIcon.classList.add('fa-volume-xmark');
+                btnText.textContent = "SESİ AÇ";
+                
+                // Renkleri eski haline getir
+                soundBtn.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
+                soundBtn.style.color = "var(--accent-color)";
+            }
+        });
+
+        // --- 2. SMOOTH SCROLL (LENIS) ---
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smooth: true
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // --- 3. ANIMASYONLAR (GSAP) ---
+        gsap.registerPlugin(ScrollTrigger);
+
+        gsap.to(".hero h1", { opacity: 1, y: 0, duration: 1.5, ease: "power4.out", delay: 0.2 });
+        gsap.to(".hero p", { opacity: 1, y: 0, duration: 1.5, ease: "power4.out", delay: 0.5 });
+
+        gsap.utils.toArray('.content-card').forEach((card) => {
+            gsap.fromTo(card, 
+                { opacity: 0, y: 100 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    scrollTrigger: {
+                        trigger: card,
+                        start: "top 85%",
+                        end: "top 50%",
+                        scrub: 1
+                    }
+                }
+            );
+        });
+
+        document.querySelectorAll('.menu-links a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                lenis.scrollTo(this.getAttribute('href'));
+            });
+        });
+    </script>
+</body>
+</html>
